@@ -112,19 +112,21 @@ class RequestException extends Exception {
     if (is_null($response_data)) {
       $response_data = array();
     }
-    $error_data = static::idx($response_data, 'error', array());
+    $error = static::idx($response_data, 'error', array());
+    $error_data = static::idx($error, 'error_data', array());
+    if (is_string($error_data)) {
+        $error_data = json_decode($error_data,true);
+    }
 
     return array(
       'code' =>
-        static::idx($error_data, 'code', static::idx($response_data, 'code')),
-      'error_subcode' => static::idx($error_data, 'error_subcode'),
-      'message' => static::idx($error_data, 'message'),
-      'error_user_title' => static::idx($error_data, 'error_user_title'),
-      'error_user_msg' => static::idx($error_data, 'error_user_msg'),
-      'error_blame_field_specs' =>
-        static::idx(static::idx($error_data, 'error_data', array()),
-          'blame_field_specs'),
-      'type' => static::idx($error_data, 'type'),
+        static::idx($error, 'code', static::idx($response_data, 'code')),
+      'error_subcode' => static::idx($error, 'error_subcode'),
+      'message' => static::idx($error, 'message'),
+      'error_user_title' => static::idx($error, 'error_user_title'),
+      'error_user_msg' => static::idx($error, 'error_user_msg'),
+      'error_blame_field_specs' => static::idx($error_data, 'blame_field_specs'),
+      'type' => static::idx($error, 'type'),
     );
   }
 
